@@ -21,7 +21,9 @@ namespace StudySphere.API.Controllers
             "Cloud computing",
             "Cybersecurity basics",
             "Software testing and quality assurance",
-            "DevOps practices"
+            "DevOps practices",
+            "Machine learning introduction",
+            "Artificial intelligence overview",
         ];
 
         // GET api/courses
