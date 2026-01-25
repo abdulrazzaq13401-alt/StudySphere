@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudySphere.API", "StudySphere.API\StudySphere.API.csproj", "{FED4AEFE-D23C-C6F9-A23A-EEB1ED30AADF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FED4AEFE-D23C-C6F9-A23A-EEB1ED30AADF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FED4AEFE-D23C-C6F9-A23A-EEB1ED30AADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FED4AEFE-D23C-C6F9-A23A-EEB1ED30AADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FED4AEFE-D23C-C6F9-A23A-EEB1ED30AADF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EC7261EC-0D07-43F6-8ADA-D5A43037DE37}
+	EndGlobalSection
+EndGlobal
