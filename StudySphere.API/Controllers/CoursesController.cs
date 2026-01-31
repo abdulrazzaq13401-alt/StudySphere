@@ -26,6 +26,8 @@ namespace StudySphere.API.Controllers
             "Artificial intelligence overview",
             "Network fundamentals",
             "Operating systems concepts",
+            "Human-computer interaction",
+            "Software project management",
         ];
 
         // GET api/courses
