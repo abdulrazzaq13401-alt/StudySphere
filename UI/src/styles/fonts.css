@@ -1,0 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+.font-logo {
+  font-family: "Fraunces", "Space Grotesk", "Times New Roman", serif;
+  letter-spacing: -0.02em;
+}
