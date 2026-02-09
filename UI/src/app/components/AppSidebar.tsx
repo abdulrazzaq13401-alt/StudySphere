@@ -11,7 +11,6 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarRail,
   SidebarSeparator,
 } from "./ui/sidebar";
 import {
@@ -26,7 +25,7 @@ import {
 
 export function AppSidebar() {
   return (
-    <Sidebar collapsible="icon" variant="inset" className="border-r">
+    <Sidebar collapsible="offcanvas" variant="sidebar" className="border-r">
       <SidebarHeader className="pb-3">
         <div className="rounded-xl border border-slate-200 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.16),_transparent_60%)] p-3">
           <div className="flex items-center gap-3">
@@ -117,7 +116,6 @@ export function AppSidebar() {
           Focused study, beautifully organized.
         </div>
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }

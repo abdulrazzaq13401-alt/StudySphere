@@ -31,11 +31,11 @@ export function SubjectGrid({ departments, onSelectDepartment }: SubjectGridProp
                   <div className={`${subject.color} size-12 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
                     <Icon className="size-6 text-white" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-gray-900 mb-1 truncate" title={subject.name}>
                       {subject.name}
                     </h3>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 truncate" title={`${subject.documents} documents`}>
                       {subject.documents} documents
                     </p>
                   </div>

@@ -1,4 +1,4 @@
-import { User } from "lucide-react";
+import { Menu, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { SidebarTrigger } from "./ui/sidebar";
 
@@ -17,7 +17,9 @@ export function Header({ onHomeClick }: HeaderProps) {
             className="flex items-center gap-3 text-left"
             onClick={onHomeClick}
           >
-            <SidebarTrigger className="hidden md:inline-flex" />
+            <SidebarTrigger className="hidden md:inline-flex">
+              <Menu className="size-5" />
+            </SidebarTrigger>
             <div className="relative grid size-9 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 via-sky-500 to-emerald-400 shadow-[0_12px_32px_rgba(56,189,248,0.35)]">
               <span className="font-logo text-lg font-semibold text-white">S</span>
               <span className="absolute -right-1 -top-1 size-2.5 rounded-full bg-amber-300 shadow-[0_0_0_2px_rgba(255,255,255,0.6)]" />
@@ -54,7 +56,9 @@ export function Header({ onHomeClick }: HeaderProps) {
               <User className="size-5" />
             </Button>
             <Button className="hidden md:flex">Upload Document</Button>
-            <SidebarTrigger className="md:hidden" />
+            <SidebarTrigger className="md:hidden">
+              <Menu className="size-5" />
+            </SidebarTrigger>
           </div>
         </div>
       </div>
