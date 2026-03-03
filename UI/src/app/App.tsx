@@ -9,8 +9,15 @@ import { useEffect, useMemo, useState } from "react";
 import { departments } from "./data/catalog";
 import { DepartmentPage } from "./components/DepartmentPage";
 import { CoursePage } from "./components/CoursePage";
+import { AdminPortal } from "./components/AdminPortal";
 
 export default function App() {
+  const isAdminPortal = window.location.pathname.toLowerCase().startsWith("/admin");
+
+  if (isAdminPortal) {
+    return <AdminPortal />;
+  }
+
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 

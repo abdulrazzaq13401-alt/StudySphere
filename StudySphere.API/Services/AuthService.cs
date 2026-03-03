@@ -19,12 +19,13 @@ namespace StudySphere.API.Services
 
         public async Task<AuthResult> RegisterAsync(string email, string password, string fullName)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == email))
+            var normalizedEmail = email.Trim().ToLowerInvariant();
+            if (await _context.Users.AnyAsync(u => u.Email != null && u.Email.ToLower() == normalizedEmail))
                 return new AuthResult { Success = false, Message = "Email already exists" };
 
             var user = new User
             {
-                Email = email,
+                Email = normalizedEmail,
                 FullName = fullName,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                 CreatedAt = DateTime.UtcNow
@@ -37,7 +38,9 @@ namespace StudySphere.API.Services
 
         public async Task<User> LoginAsync(string email, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var normalizedEmail = email.Trim().ToLowerInvariant();
+            var user = await _context.Users.FirstOrDefaultAsync(
+                u => u.Email != null && u.Email.ToLower() == normalizedEmail);
             if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
                 return null;
             return user;
