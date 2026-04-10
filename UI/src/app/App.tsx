@@ -12,7 +12,12 @@ import { CoursePage } from "./components/CoursePage";
 import { AdminPortal } from "./components/AdminPortal";
 
 export default function App() {
-  const isAdminPortal = window.location.pathname.toLowerCase().startsWith("/admin");
+  const pathname = window.location.pathname.toLowerCase();
+  const isAdminPortal =
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/") ||
+    pathname === "/user/admin" ||
+    pathname.startsWith("/user/admin/");
 
   if (isAdminPortal) {
     return <AdminPortal />;
