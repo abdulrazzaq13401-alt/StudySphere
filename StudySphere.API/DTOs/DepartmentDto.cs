@@ -1,13 +1,11 @@
-using System.Collections.Generic;
-
-namespace StudySphere.API.Models
+namespace StudySphere.API.DTOs
 {
-    public class Department
+    public class DepartmentDto
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Slug { get; set; } = string.Empty;
-
-        public List<Course> Courses { get; set; } = [];
+        public int CourseCount { get; set; }
+        public int ResourceCount { get; set; }
     }
 }

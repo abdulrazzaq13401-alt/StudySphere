@@ -3,6 +3,7 @@ import { Building2, Layers3, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { AdminDepartmentManager } from "./AdminDepartmentManager";
+import { API_BASE_URL } from "../lib/api";
 
 type AdminUser = {
   id: number;
@@ -15,8 +16,6 @@ type AdminLoginResponse = {
   message: string;
   user: AdminUser;
 };
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "https://localhost:5001";
 
 export function AdminPortal() {
   const [email, setEmail] = useState("admin@studysphere.com");
@@ -151,7 +150,7 @@ export function AdminPortal() {
                 <Layers3 className="size-4 text-sky-300" />
                 Department CRUD
               </div>
-              <p className="text-sm text-slate-400">UI-first implementation using local state.</p>
+              <p className="text-sm text-slate-400">Live CRUD using the departments API and database.</p>
             </div>
           </div>
         </div>

@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using StudySphere.API.DTOs;
+using StudySphere.API.Services.Interfaces;
 
 namespace StudySphere.API.Controllers
 {
@@ -7,58 +10,69 @@ namespace StudySphere.API.Controllers
     [Route("api/[controller]")]
     public class DepartmentsController : ControllerBase
     {
-        string[] departments =
-        [
-            "Computer Science",
-            "Engineering",
-            "Business Administration",
-            "Liberal Arts",
-            "Medicine",
-            "Law",
-            "Education",
-            "Psychology",
-            "Pharmacy",
-            "Nursing",
-            "Architecture",
-            "Environmental Science",
-            "Physical Therapy",
-            "Economics",
-            "Political Science",
-            "Sociology",
-            "History",
-            "Mathematics",
-            "English ",
-            "Emergency Care",
-            "Pakistan Studies",
-            "Islamic Studies",
-            "Microbiology",
-            "Biochemistry",
+        private readonly IDepartmentService _departmentService;
 
-        ];
+        public DepartmentsController(IDepartmentService departmentService)
+        {
+            _departmentService = departmentService;
+        }
 
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<ActionResult<IReadOnlyList<DepartmentDto>>> GetAll()
         {
-            return departments;
+            var departments = await _departmentService.GetAllAsync();
+            return Ok(departments);
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<DepartmentDto>> GetById(int id)
         {
-            return departments[id];
+            var department = await _departmentService.GetByIdAsync(id);
+            if (department == null)
+            {
+                return NotFound(new { message = "Department not found." });
+            }
+
+            return Ok(department);
         }
 
-        // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value) { }
+        public async Task<ActionResult<DepartmentDto>> Create([FromBody] CreateDepartmentRequest request)
+        {
+            var result = await _departmentService.CreateAsync(request);
+            return ToActionResult(result, createdRouteId: result.Data?.Id);
+        }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value) { }
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<DepartmentDto>> Update(int id, [FromBody] UpdateDepartmentRequest request)
+        {
+            var result = await _departmentService.UpdateAsync(id, request);
+            return ToActionResult(result);
+        }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id) { }
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var result = await _departmentService.DeleteAsync(id);
+            if (result.Status == DepartmentCommandStatus.Success)
+            {
+                return NoContent();
+            }
+
+            return ToActionResult(result);
+        }
+
+        private ActionResult ToActionResult<T>(DepartmentCommandResult<T> result, int? createdRouteId = null)
+        {
+            return result.Status switch
+            {
+                DepartmentCommandStatus.Success when createdRouteId.HasValue =>
+                    CreatedAtAction(nameof(GetById), new { id = createdRouteId.Value }, result.Data),
+                DepartmentCommandStatus.Success => Ok(result.Data),
+                DepartmentCommandStatus.NotFound => NotFound(new { message = result.ErrorMessage }),
+                DepartmentCommandStatus.Conflict => Conflict(new { message = result.ErrorMessage }),
+                _ => BadRequest(new { message = result.ErrorMessage }),
+            };
+        }
     }
 }

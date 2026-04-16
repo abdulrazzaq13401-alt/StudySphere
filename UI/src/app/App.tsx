@@ -17,7 +17,9 @@ export default function App() {
     pathname === "/admin" ||
     pathname.startsWith("/admin/") ||
     pathname === "/user/admin" ||
-    pathname.startsWith("/user/admin/");
+    pathname.startsWith("/user/admin/") ||
+    pathname === "/admin/departments" ||
+    pathname.startsWith("/admin/departments/");
 
   if (isAdminPortal) {
     return <AdminPortal />;
