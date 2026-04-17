@@ -1,59 +1,85 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using StudySphere.API.DTOs;
+using StudySphere.API.Services.Interfaces;
 
 namespace StudySphere.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class CoursesController : ControllerBase
     {
-        string[] course =
-        [
-            "Programming fundamentafls",
-            "Object oriented programming",
-            "Data structures and algorithms",
-            "Database management systems",
-            "Web development",
-            "Mobile app development",
-            "Cloud computing",
-            "Cybersecurity basics",
-            "Software testing and quality assurance",
-            "DevOps practices",
-            "Machine learning introduction",
-            "Artificial intelligence overview",
-            "Network fundamentals",
-            "Operating systems concepts",
-            "Human-computer interaction",
-            "Software project management",
-        ];
+        private readonly ICourseService _courseService;
 
-        // GET api/courses
+        public CoursesController(ICourseService courseService)
+        {
+            _courseService = courseService;
+        }
+
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<ActionResult<IReadOnlyList<CourseDto>>> GetAll([FromQuery] int? departmentId)
         {
-            return course;
+            var courses = await _courseService.GetAllAsync(departmentId);
+            return Ok(courses);
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        [HttpGet("lookup-data")]
+        public async Task<ActionResult<CourseLookupDto>> GetLookupData()
         {
-            return course[id];
+            var lookupData = await _courseService.GetLookupDataAsync();
+            return Ok(lookupData);
         }
 
-        // POST api/values
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<CourseDto>> GetById(int id)
+        {
+            var course = await _courseService.GetByIdAsync(id);
+            if (course == null)
+            {
+                return NotFound(new { message = "Course not found." });
+            }
+
+            return Ok(course);
+        }
+
         [HttpPost]
-        public void Post([FromBody] string value) { }
+        public async Task<ActionResult<CourseDto>> Create([FromBody] CreateCourseRequest request)
+        {
+            var result = await _courseService.CreateAsync(request);
+            return ToActionResult(result, result.Data?.Id);
+        }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value) { }
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<CourseDto>> Update(int id, [FromBody] UpdateCourseRequest request)
+        {
+            var result = await _courseService.UpdateAsync(id, request);
+            return ToActionResult(result);
+        }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id) { }
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var result = await _courseService.DeleteAsync(id);
+            if (result.Status == DepartmentCommandStatus.Success)
+            {
+                return NoContent();
+            }
+
+            return ToActionResult(result);
+        }
+
+        private ActionResult ToActionResult<T>(DepartmentCommandResult<T> result, int? createdRouteId = null)
+        {
+            return result.Status switch
+            {
+                DepartmentCommandStatus.Success when createdRouteId.HasValue =>
+                    CreatedAtAction(nameof(GetById), new { id = createdRouteId.Value }, result.Data),
+                DepartmentCommandStatus.Success => Ok(result.Data),
+                DepartmentCommandStatus.NotFound => NotFound(new { message = result.ErrorMessage }),
+                DepartmentCommandStatus.Conflict => Conflict(new { message = result.ErrorMessage }),
+                _ => BadRequest(new { message = result.ErrorMessage }),
+            };
+        }
     }
 }

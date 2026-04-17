@@ -3,6 +3,8 @@ import { Building2, Layers3, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { AdminDepartmentManager } from "./AdminDepartmentManager";
+import { AdminCourseManager } from "./AdminCourseManager";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { API_BASE_URL } from "../lib/api";
 
 type AdminUser = {
@@ -126,6 +128,13 @@ export function AdminPortal() {
                 <Building2 className="size-4" />
                 Departments
               </a>
+              <a
+                href="#courses-admin"
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15"
+              >
+                <Layers3 className="size-4" />
+                Courses
+              </a>
               <Button type="button" variant="secondary" onClick={() => setAdmin(null)}>
                 <LogOut className="size-4" />
                 Sign out
@@ -148,15 +157,26 @@ export function AdminPortal() {
               <p className="text-sm text-slate-300">Active module</p>
               <div className="mt-2 flex items-center gap-2 font-medium">
                 <Layers3 className="size-4 text-sky-300" />
-                Department CRUD
+                Admin CRUD Workspace
               </div>
-              <p className="text-sm text-slate-400">Live CRUD using the departments API and database.</p>
+              <p className="text-sm text-slate-400">Live department and course CRUD using the API and database.</p>
             </div>
           </div>
         </div>
 
         <div className="mt-6">
-          <AdminDepartmentManager />
+          <Tabs defaultValue="departments" className="gap-6">
+            <TabsList className="grid w-full max-w-md grid-cols-2">
+              <TabsTrigger value="departments">Departments</TabsTrigger>
+              <TabsTrigger value="courses">Courses</TabsTrigger>
+            </TabsList>
+            <TabsContent value="departments">
+              <AdminDepartmentManager />
+            </TabsContent>
+            <TabsContent value="courses">
+              <AdminCourseManager />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
