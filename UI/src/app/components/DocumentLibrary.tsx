@@ -1,133 +1,95 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DocumentCard, Document } from "./DocumentCard";
 import { FilterBar, FilterState } from "./FilterBar";
+import { API_BASE_URL } from "../lib/api";
 
-const mockDocuments: Document[] = [
-  {
-    id: "1",
-    title: "Data Structures and Algorithms - Final Exam 2023",
-    subject: "Computer Science",
-    type: "Past Paper",
-    year: "2023",
-    semester: "Fall",
-    uploadedBy: "Prof. Johnson",
-    uploadDate: "2024-01-15",
-    downloads: 1243,
-    pages: 12
-  },
-  {
-    id: "2",
-    title: "Calculus II - Complete Lecture Notes",
-    subject: "Mathematics",
-    type: "Lecture Notes",
-    year: "2024",
-    semester: "Spring",
-    uploadedBy: "Dr. Smith",
-    uploadDate: "2024-02-20",
-    downloads: 892,
-    pages: 156
-  },
-  {
-    id: "3",
-    title: "Quantum Mechanics - Study Guide",
-    subject: "Physics",
-    type: "Study Guide",
-    year: "2023",
-    semester: "Fall",
-    uploadedBy: "Dr. Brown",
-    uploadDate: "2023-11-10",
-    downloads: 567,
-    pages: 45
-  },
-  {
-    id: "4",
-    title: "Organic Chemistry Lab Manual",
-    subject: "Chemistry",
-    type: "Textbook",
-    year: "2024",
-    semester: "Spring",
-    uploadedBy: "Prof. Davis",
-    uploadDate: "2024-01-08",
-    downloads: 723,
-    pages: 234
-  },
-  {
-    id: "5",
-    title: "Database Systems - Assignment Solutions",
-    subject: "Computer Science",
-    type: "Assignment",
-    year: "2023",
-    semester: "Spring",
-    uploadedBy: "TA Williams",
-    uploadDate: "2023-05-15",
-    downloads: 1456,
-    pages: 28
-  },
-  {
-    id: "6",
-    title: "Linear Algebra - Midterm Exam 2024",
-    subject: "Mathematics",
-    type: "Past Paper",
-    year: "2024",
-    semester: "Spring",
-    uploadedBy: "Prof. Martinez",
-    uploadDate: "2024-03-12",
-    downloads: 934,
-    pages: 8
-  },
-  {
-    id: "7",
-    title: "Introduction to Psychology - Complete Notes",
-    subject: "Psychology",
-    type: "Lecture Notes",
-    year: "2023",
-    semester: "Fall",
-    uploadedBy: "Dr. Anderson",
-    uploadDate: "2023-12-05",
-    downloads: 678,
-    pages: 98
-  },
-  {
-    id: "8",
-    title: "Financial Accounting - Study Guide & Practice",
-    subject: "Business",
-    type: "Study Guide",
-    year: "2024",
-    semester: "Spring",
-    uploadedBy: "Prof. Lee",
-    uploadDate: "2024-02-28",
-    downloads: 812,
-    pages: 67
-  },
-  {
-    id: "9",
-    title: "Machine Learning - Final Project Guidelines",
-    subject: "Computer Science",
-    type: "Assignment",
-    year: "2023",
-    semester: "Fall",
-    uploadedBy: "Dr. Chen",
-    uploadDate: "2023-10-20",
-    downloads: 1089,
-    pages: 15
-  }
-];
+type ResourceItem = {
+  id: number;
+  title: string;
+  resourceTypeLabel: string;
+  courseCode: string;
+  courseTitle: string;
+  departmentName: string;
+  fileName: string;
+  downloads: number;
+  createdAt: string;
+  downloadUrl: string;
+};
+
+function mapResourceType(type: string): Document["type"] {
+  return type === "Past Paper" ? "Past Paper" : "Lecture Notes";
+}
+
+function mapResourceToDocument(resource: ResourceItem): Document {
+  const createdAt = new Date(resource.createdAt);
+  const year = Number.isNaN(createdAt.getTime()) ? "All Years" : String(createdAt.getFullYear());
+  const downloadUrl = `${API_BASE_URL}${resource.downloadUrl}`;
+
+  return {
+    id: String(resource.id),
+    title: resource.title,
+    subject: resource.departmentName || resource.courseTitle || "General",
+    type: mapResourceType(resource.resourceTypeLabel),
+    year,
+    semester: "All Semesters",
+    uploadedBy: resource.courseCode || "StudySphere",
+    uploadDate: resource.createdAt,
+    downloads: resource.downloads,
+    pages: 0,
+    fileName: resource.fileName,
+    downloadUrl,
+    viewUrl: downloadUrl.replace(/\/download$/, "/view"),
+  };
+}
 
 export function DocumentLibrary() {
   const [filters, setFilters] = useState<FilterState>({
     subject: "All Subjects",
     type: "All Types",
     year: "All Years",
-    semester: "All Semesters"
+    semester: "All Semesters",
   });
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const filteredDocuments = mockDocuments.filter((doc) => {
-    if (filters.subject !== "All Subjects" && doc.subject !== filters.subject) return false;
-    if (filters.type !== "All Types" && doc.type !== filters.type) return false;
-    if (filters.year !== "All Years" && doc.year !== filters.year) return false;
-    if (filters.semester !== "All Semesters" && doc.semester !== filters.semester) return false;
-    return true;
-  });
+  useEffect(() => {
+    const loadDocuments = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/resources`);
+        if (!response.ok) {
+          setError("Unable to load the document listing.");
+          setDocuments([]);
+          return;
+        }
+
+        const payload = (await response.json()) as ResourceItem[];
+        setDocuments(payload.map(mapResourceToDocument));
+      } catch {
+        setError("Unable to connect to the resources API.");
+        setDocuments([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadDocuments();
+  }, []);
+
+  const filteredDocuments = useMemo(
+    () =>
+      documents.filter((doc) => {
+        if (filters.subject !== "All Subjects" && doc.subject !== filters.subject) return false;
+        if (filters.type !== "All Types" && doc.type !== filters.type) return false;
+        if (filters.year !== "All Years" && doc.year !== filters.year) return false;
+        if (filters.semester !== "All Semesters" && doc.semester !== filters.semester) return false;
+        return true;
+      }),
+    [documents, filters],
+  );
 
   return (
     <section id="documents" className="py-16 scroll-mt-24">
@@ -150,20 +112,28 @@ export function DocumentLibrary() {
             </p>
           </div>
 
-          <div className="space-y-4">
-            {filteredDocuments.map((document) => (
-              <DocumentCard key={document.id} document={document} />
-            ))}
-          </div>
+          {isLoading && (
+            <div className="text-center py-12 text-gray-600">Loading documents...</div>
+          )}
 
-          {filteredDocuments.length === 0 && (
+          {!isLoading && error && (
+            <div className="text-center py-12 text-red-600">{error}</div>
+          )}
+
+          {!isLoading && !error && filteredDocuments.length > 0 && (
+            <div className="space-y-4">
+              {filteredDocuments.map((document) => (
+                <DocumentCard key={document.id} document={document} />
+              ))}
+            </div>
+          )}
+
+          {!isLoading && !error && filteredDocuments.length === 0 && (
             <div className="text-center py-12">
               <p className="text-xl text-gray-600">
                 No documents found matching your filters.
               </p>
-              <p className="text-gray-500 mt-2">
-                Try adjusting your filter criteria.
-              </p>
+              <p className="text-gray-500 mt-2">Try adjusting your filter criteria.</p>
             </div>
           )}
         </div>

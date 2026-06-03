@@ -3,7 +3,7 @@ using StudySphere.API.Models;
 
 namespace StudySphere.API.DTOs
 {
-    public class CreateResourceRequest
+    public class UpdateResourceRequest
     {
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;

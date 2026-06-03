@@ -1,9 +1,10 @@
 import { FormEvent, useMemo, useState } from "react";
-import { Building2, Layers3, LogOut } from "lucide-react";
+import { Building2, FileStack, Layers3, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { AdminDepartmentManager } from "./AdminDepartmentManager";
 import { AdminCourseManager } from "./AdminCourseManager";
+import { AdminResourceManager } from "./AdminResourceManager";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { API_BASE_URL } from "../lib/api";
 
@@ -135,6 +136,13 @@ export function AdminPortal() {
                 <Layers3 className="size-4" />
                 Courses
               </a>
+              <a
+                href="#resources-admin"
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15"
+              >
+                <FileStack className="size-4" />
+                Resources
+              </a>
               <Button type="button" variant="secondary" onClick={() => setAdmin(null)}>
                 <LogOut className="size-4" />
                 Sign out
@@ -166,15 +174,19 @@ export function AdminPortal() {
 
         <div className="mt-6">
           <Tabs defaultValue="departments" className="gap-6">
-            <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsList className="grid w-full max-w-xl grid-cols-3">
               <TabsTrigger value="departments">Departments</TabsTrigger>
               <TabsTrigger value="courses">Courses</TabsTrigger>
+              <TabsTrigger value="resources">Resources</TabsTrigger>
             </TabsList>
             <TabsContent value="departments">
               <AdminDepartmentManager />
             </TabsContent>
             <TabsContent value="courses">
               <AdminCourseManager />
+            </TabsContent>
+            <TabsContent value="resources">
+              <AdminResourceManager />
             </TabsContent>
           </Tabs>
         </div>

@@ -48,3 +48,6 @@ Thumbs.db
 *.tmp
 *.bak
 *.cache
+
+# Runtime uploaded resources
+StudySphere.API/Storage/resources/

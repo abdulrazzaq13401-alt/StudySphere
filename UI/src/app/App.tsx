@@ -101,6 +101,7 @@ export default function App() {
           {selectedDepartment && selectedCourse && (
             <CoursePage
               course={selectedCourse}
+              departmentId={selectedDepartment.id}
               departmentName={selectedDepartment.name}
               onBack={() => {
                 setSelectedCourseId(null);

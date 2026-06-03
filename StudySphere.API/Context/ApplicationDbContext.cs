@@ -40,6 +40,21 @@ namespace StudySphere.API.Context
                     .HasForeignKey(course => course.SemesterId)
                     .IsRequired(false);
             });
+
+            modelBuilder.Entity<Resource>(entity =>
+            {
+                entity.Property(resource => resource.Title).IsRequired().HasMaxLength(250);
+                entity.Property(resource => resource.Description).HasMaxLength(2000);
+                entity.Property(resource => resource.OriginalFileName).IsRequired().HasMaxLength(260);
+                entity.Property(resource => resource.StoredFileName).IsRequired().HasMaxLength(200);
+                entity.Property(resource => resource.StoredFilePath).IsRequired().HasMaxLength(400);
+                entity.Property(resource => resource.ContentType).IsRequired().HasMaxLength(150);
+                entity.Property(resource => resource.ResourceType).HasConversion<int>();
+                entity.HasOne(resource => resource.Course)
+                    .WithMany(course => course.Resources)
+                    .HasForeignKey(resource => resource.CourseId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }

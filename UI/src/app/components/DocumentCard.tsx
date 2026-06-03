@@ -14,6 +14,9 @@ export interface Document {
   uploadDate: string;
   downloads: number;
   pages: number;
+  fileName?: string;
+  downloadUrl?: string;
+  viewUrl?: string;
 }
 
 interface DocumentCardProps {
@@ -21,6 +24,9 @@ interface DocumentCardProps {
 }
 
 export function DocumentCard({ document }: DocumentCardProps) {
+  const downloadUrl = document.downloadUrl ?? "#";
+  const viewUrl = document.viewUrl ?? downloadUrl;
+
   const getTypeColor = (type: string) => {
     switch (type) {
       case "Past Paper":
@@ -68,18 +74,23 @@ export function DocumentCard({ document }: DocumentCardProps) {
               <User className="size-4" />
               {document.uploadedBy}
             </span>
-            <span>{document.pages} pages</span>
+            {document.pages > 0 && <span>{document.pages} pages</span>}
             <span>{document.downloads} downloads</span>
+            {document.fileName && <span>{document.fileName}</span>}
           </div>
 
           <div className="flex gap-2">
-            <Button size="sm" className="flex-1 sm:flex-initial">
-              <Download className="size-4 mr-2" />
-              Download
+            <Button size="sm" variant="outline" asChild>
+              <a href={viewUrl} target="_blank" rel="noreferrer">
+                <Eye className="size-4 mr-2" />
+                View
+              </a>
             </Button>
-            <Button size="sm" variant="outline">
-              <Eye className="size-4 mr-2" />
-              Preview
+            <Button size="sm" className="flex-1 sm:flex-initial" asChild>
+              <a href={downloadUrl} download>
+                <Download className="size-4 mr-2" />
+                Download
+              </a>
             </Button>
           </div>
         </div>
