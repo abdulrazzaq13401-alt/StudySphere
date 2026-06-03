@@ -5,12 +5,16 @@ import { ChevronLeft } from "lucide-react";
 
 type DepartmentPageProps = {
   department: Department;
+  isLoadingCourses?: boolean;
+  courseLoadError?: string | null;
   onBack: () => void;
   onSelectCourse: (courseId: string) => void;
 };
 
 export function DepartmentPage({
   department,
+  isLoadingCourses = false,
+  courseLoadError = null,
   onBack,
   onSelectCourse,
 }: DepartmentPageProps) {
@@ -35,32 +39,52 @@ export function DepartmentPage({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {department.courses.map((course) => (
-            <Card
-              key={course.id}
-              className="p-6 hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => onSelectCourse(course.id)}
-            >
-              <div className="flex items-start gap-4">
-                <div className="size-12 rounded-xl bg-slate-900/5 flex items-center justify-center">
-                  <course.icon className="size-6 text-slate-700" />
+        {courseLoadError && (
+          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {courseLoadError}
+          </div>
+        )}
+
+        {isLoadingCourses && (
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
+            Loading courses from the database...
+          </div>
+        )}
+
+        {!isLoadingCourses && !courseLoadError && department.courses.length === 0 && (
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
+            No courses are available for this department yet.
+          </div>
+        )}
+
+        {!isLoadingCourses && !courseLoadError && department.courses.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {department.courses.map((course) => (
+              <Card
+                key={course.id}
+                className="p-6 hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => onSelectCourse(course.id)}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="size-12 rounded-xl bg-slate-900/5 flex items-center justify-center">
+                    <course.icon className="size-6 text-slate-700" />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
+                      {course.code}
+                    </p>
+                    <h3 className="text-lg font-semibold text-slate-900">
+                      {course.name}
+                    </h3>
+                    <p className="text-sm text-slate-600 mt-2">
+                      {course.description}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
-                    {course.code}
-                  </p>
-                  <h3 className="text-lg font-semibold text-slate-900">
-                    {course.name}
-                  </h3>
-                  <p className="text-sm text-slate-600 mt-2">
-                    {course.description}
-                  </p>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
